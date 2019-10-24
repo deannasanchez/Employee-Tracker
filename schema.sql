@@ -21,7 +21,7 @@ INDEX user_group_ind(user_group_id),
 
   FOREIGN KEY (user_group_id)
 	REFERENCES user_group(id)
-    ON DELETE CASCADE
+    -- ON DELETE CASCADE
 );
 
 CREATE TABLE comment (
@@ -37,6 +37,6 @@ CREATE TABLE comment (
     ON DELETE CASCADE,
   FOREIGN KEY (responding_to_id)
 	REFERENCES comment(id)
-    ON DELETE CASCADE
+    -- ON DELETE CASCADE
 );
 
