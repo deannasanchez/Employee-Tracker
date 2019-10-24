@@ -1,93 +1,114 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 
-// create the connection information for the sql database
 var connection = mysql.createConnection({
   host: "localhost",
-
-  // Your port; if not 3306
   port: 3000,
-
-  // Your username
   user: "root",
-
-  // Your password
   password: "milkshake",
   database: "employee_trackerdb"
 });
 
-// connect to the mysql server and sql database
 connection.connect(function(err) {
   if (err) throw err;
-  // run the start function after the connection is made to prompt the user
   start();
 });
 
-// function which prompts the user for what action they should take
 function start() {
   inquirer
   .prompt({
     name: "whatToDo",
     type: "input",
     message: "What would you like to do?",
-    choices: ["View Employees", "View Employees by Departments", "View Employees by Managers", "Add Employee", "Remove Employee"]
+    choices: ["View Employees", "View Departments", "Add Employee", "Add Department"]
   })
     .then(function(answer) {
-      // based on their answer, either call the bid or the post functions
-      if (answer.whatToDo === "View Employees") {
-        allEmployees();
+      if (answer.whatToDo === "Add Employees") {
+        addEmployee();
       }
-      else if(answer.whatToDo === "View Employees by Department") {
-        viewDept();
+      else if(answer.whatToDo === "Add Department") {
+        addDepartment();
       } else{
         connection.end();
       }
     });
 }
 
-// function to handle posting new items up for auction
-function allEmployees() {
-  // prompt for info about the item being put up for auction
+function addEmployee() {
   inquirer
     .prompt([
       {
-        name: "item",
+        name: "first_name",
         type: "input",
-        message: "What is the item you would like to submit?"
+        message: "What is their First Name?"
       },
       {
-        name: "category",
+        name: "last_name",
         type: "input",
-        message: "What category would you like to place your auction in?"
+        message: "What is their Last Name?"
       },
       {
-        name: "startingBid",
+        name: "role_id",
         type: "input",
-        message: "What would you like your starting bid to be?",
-        validate: function(value) {
-          if (isNaN(value) === false) {
-            return true;
-          }
-          return false;
-        }
+        message: "What is their role?"
+      },
+      {
+        name: "manager_id",
+        type: "input",
+        message: "Who is their Manager"
       }
+    //   {
+    //     name: "startingBid",
+    //     type: "input",
+    //     message: "What would you like your starting bid to be?",
+    //     validate: function(value) {
+    //       if (isNaN(value) === false) {
+    //         return true;
+    //       }
+    //       return false;
+    //     }
+    //   }
     ])
     .then(function(answer) {
-      // when finished prompting, insert a new item into the db with that info
       connection.query(
-        "INSERT INTO auctions SET ?",
+        "INSERT INTO employee SET ?",
         {
-          item_name: answer.item,
-          category: answer.category,
-          starting_bid: answer.startingBid || 0,
-          highest_bid: answer.startingBid || 0
+          first_name: answer.first_name,
+          last_name: answer.last_name,
+          role_id: answer.role_id || 0,
+          manager_id: answer.manager_id || 0
         },
         function(err) {
           if (err) throw err;
-          console.log("Your auction was created successfully!");
-          // re-prompt the user for if they want to bid or post
+          console.log("Your employee was created successfully!");
           start();
         }
       );
     });
 }
+
+function addDepartment() {
+    inquirer
+      .prompt([
+        {
+          name: "name",
+          type: "input",
+          message: "What is the Department Name?"
+        }
+      ])
+      .then(function(answer) {
+        connection.query(
+          "INSERT INTO department SET ?",
+          {
+            name: answer.name
+          },
+          function(err) {
+            if (err) throw err;
+            console.log("Your department was created successfully!");
+            start();
+          }
+        );
+      });
+  }
+
+  
