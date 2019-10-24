@@ -6,14 +6,14 @@ var connection = mysql.createConnection({
   host: "localhost",
 
   // Your port; if not 3306
-  port: process.env.PORT || 3000,
+  port: 3000,
 
   // Your username
   user: "root",
 
   // Your password
   password: "milkshake",
-  database: "guild_DB"
+  database: "employee_trackerdb"
 });
 
 // connect to the mysql server and sql database
@@ -26,19 +26,19 @@ connection.connect(function(err) {
 // function which prompts the user for what action they should take
 function start() {
   inquirer
-    .prompt({
-      name: "postOrBid",
-      type: "list",
-      message: "Would you like to [POST] an auction or [BID] on an auction?",
-      choices: ["POST", "BID", "EXIT"]
-    })
+  .prompt({
+    name: "whatToDo",
+    type: "input",
+    message: "What would you like to do?",
+    choices: ["View Employees", "View Employees by Departments", "View Employees by Managers", "Add Employee", "Remove Employee"]
+  })
     .then(function(answer) {
       // based on their answer, either call the bid or the post functions
-      if (answer.postOrBid === "POST") {
-        postAuction();
+      if (answer.whatToDo === "View Employees") {
+        allEmployees();
       }
-      else if(answer.postOrBid === "BID") {
-        bidAuction();
+      else if(answer.whatToDo === "View Employees by Department") {
+        viewDept();
       } else{
         connection.end();
       }
@@ -46,7 +46,7 @@ function start() {
 }
 
 // function to handle posting new items up for auction
-function postAuction() {
+function allEmployees() {
   // prompt for info about the item being put up for auction
   inquirer
     .prompt([

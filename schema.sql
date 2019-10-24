@@ -1,42 +1,28 @@
-DROP DATABASE IF EXISTS guild_db;
-CREATE database guild_db;
+DROP DATABASE IF EXISTS employee_trackerdb;
+CREATE database employee_trackerdb;
 
-USE guild_db;
+USE employee_trackerdb;
 
-CREATE TABLE user_group (
+CREATE TABLE department (
   id INT NOT NULL AUTO_INCREMENT,
   name VARCHAR(50) NOT NULL,
   PRIMARY KEY (id)
 );
 
-CREATE TABLE user (
+CREATE TABLE role (
   id INT NOT NULL AUTO_INCREMENT,
-  username VARCHAR(50) NOT NULL,
-  user_group_id INT NOT NULL,
-  PRIMARY KEY (id),
-
-UNIQUE(username, user_group_id),
-
-INDEX user_group_ind(user_group_id),
-
-  FOREIGN KEY (user_group_id)
-	REFERENCES user_group(id)
-    -- ON DELETE CASCADE
+  title VARCHAR(50) NOT NULL,
+  salary INT,
+  department_id INT NOT NULL,
+  PRIMARY KEY (id)
 );
 
-CREATE TABLE comment (
+CREATE TABLE employee (
   id INT NOT NULL AUTO_INCREMENT,
-  text VARCHAR(255) NULL,
-  responding_to_id INT NULL,
-  user_id INT NOT NULL,
-  PRIMARY KEY (id),
-  INDEX user_ind(user_id),
-  INDEX responding_to_ind(responding_to_id),
-  FOREIGN KEY (user_id)
-	REFERENCES user(id)
-    ON DELETE CASCADE,
-  FOREIGN KEY (responding_to_id)
-	REFERENCES comment(id)
-    -- ON DELETE CASCADE
+  first_name VARCHAR(30) NULL,
+  last_name VARCHAR(30) NULL,
+  role_id INT NOT NULL,
+  manager_id INT NULL,
+  PRIMARY KEY (id)
 );
 
