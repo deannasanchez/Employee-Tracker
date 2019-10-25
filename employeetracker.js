@@ -20,7 +20,7 @@ function start() {
             name: "whatToDo",
             type: "list",
             message: "What would you like to do?",
-            choices: ["View Employees", "View Departments", "Add Employee", "Add Department", "View Roles", "Add Roles", "EXIT"]
+            choices: ["View Employees", "Add Employee", "View Departments", "Add Department", "View Roles", "Add Roles", "EXIT"]
         })
         .then(function (answer) {
             console.log(answer.whatToDo)
@@ -70,7 +70,7 @@ function viewEmployees() {
                 }
             ])
             .then(function (answer) {
-                console.log(answer.employees)
+                console.table(answer.employees)
                 updateEmployee(answer.employees)
             })
     })
@@ -140,7 +140,7 @@ function viewDepartments() {
                 }
             ])
             .then(function (answer) {
-                console.log(answer.departments)
+                console.table(answer.departments)
                 updateDepartment(answer.departments)
                 
             })
@@ -273,7 +273,7 @@ function viewRoles() {
                 }
             ])
             .then(function (answer) {
-                console.log(answer.roles)
+                console.table(answer.roles)
                 updateRole(answer.roles)
             })
     })
@@ -355,7 +355,7 @@ function updateRole(roleTitle) {
                 function (error) {
                     if (error) throw error;
                     console.log("Role updated successfully!");
-                    // start();
+                    start();
                 }
             );
         })
