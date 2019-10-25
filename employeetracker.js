@@ -20,7 +20,7 @@ function start() {
             name: "whatToDo",
             type: "list",
             message: "What would you like to do?",
-            choices: ["View Employees", "View Departments", "Add Employee", "Add Department"]
+            choices: ["View Employees", "View Departments", "Add Employee", "Add Department", "View Roles", "Add Roles", "EXIT"]
         })
         .then(function (answer) {
             console.log(answer.whatToDo)
@@ -36,6 +36,15 @@ function start() {
                     break;
                 case "Add Department":
                     addDepartment();
+                    break;
+                case "View Roles":
+                    viewRoles();
+                    break;
+                case "Add Roles":
+                    addRole();
+                    break;
+                case "EXIT":
+                    connection.end();
                     break;
             }
         });
@@ -63,6 +72,7 @@ function viewEmployees() {
             .then(function (answer) {
                 console.log(answer.employees)
                 updateEmployee(answer.employees)
+                start();
             })
     })
 }
@@ -111,6 +121,32 @@ function addEmployee() {
         });
 }
 
+function viewDepartments() {
+    connection.query("SELECT * FROM department", function (err, results) {
+        if (err) throw err;
+        inquirer
+            .prompt([
+                {
+                    name: "departments",
+                    type: "list",
+                    choices: function () {
+                        var deptArray = [];
+                        for (var i = 0; i < results.length; i++) {
+
+                            deptArray.push(results[i].name);
+                        }
+                        return deptArray;
+                    },
+                    message: "What department would you like to update?"
+                }
+            ])
+            .then(function (answer) {
+                console.log(answer.departments)
+                updateDepartment(answer.departments)
+                start();
+            })
+    })
+}
 
 function addDepartment() {
     inquirer
@@ -184,6 +220,143 @@ function updateEmployee(lastName) {
                 function (error) {
                     if (error) throw err;
                     console.log("Employee updated successfully!");
+                    start();
+                }
+            );
+        })
+}
+
+function updateDepartment(deptName) {
+    inquirer
+        .prompt([
+            {
+                name: "name",
+                type: "input",
+                message: "What is the department name?"
+            },
+        ]).then(function (answer) {
+            connection.query(
+                "UPDATE department SET ? WHERE ?",
+                [
+                    {
+                        name: answer.name
+                    },
+                    {
+                        name: deptName
+                    },
+                ],
+                function (error) {
+                    if (error) throw err;
+                    console.log("Department updated successfully!");
+                    start();
+                }
+            );
+        })
+}
+
+function viewRoles() {
+    connection.query("SELECT * FROM role", function (err, results) {
+        if (err) throw err;
+        inquirer
+            .prompt([
+                {
+                    name: "roles",
+                    type: "list",
+                    choices: function () {
+                        var choiceArray = [];
+                        for (var i = 0; i < results.length; i++) {
+
+                            choiceArray.push(results[i].title);
+                        }
+                        return choiceArray;
+                    },
+                    message: "What role would you like to update?"
+                }
+            ])
+            .then(function (answer) {
+                console.log(answer.roles)
+                updateRole(answer.roles)
+            })
+    })
+}
+
+
+function addRole() {
+    inquirer
+        .prompt([
+            {
+                name: "title",
+                type: "input",
+                message: "What is the title?"
+            },
+            {
+                name: "salary",
+                type: "input",
+                message: "What is their salary?"
+            },
+            {
+                name: "department_id",
+                type: "input",
+                message: "What is their department?"
+            }
+
+        ])
+        .then(function (answer) {
+            connection.query(
+                "INSERT INTO role SET ?",
+                {
+                    title: answer.title,
+                    salary: answer.salary,
+                    department_id: answer.department_id
+                },
+                function (err) {
+                    if (err) throw err;
+                    console.log("Your role was created successfully!");
+                    start();
+                }
+            );
+        });
+}
+
+
+function updateRole(roleTitle) {
+    inquirer
+        .prompt([
+            {
+                name: "title",
+                type: "input",
+                message: "What is the role title?"
+            },
+            {
+                name: "salary",
+                type: "input",
+                message: "What is the role salary?"
+            },
+            {
+                name: "department_id",
+                type: "input",
+                message: "What is the department of the role?"
+            },
+        ]).then(function (answer) {
+            connection.query(
+                "UPDATE role SET ?,?,?,? WHERE ?",
+                [
+                    {
+                        name: answer.title
+                    },
+                    {
+                        salary: answer.salary
+                    },
+                    {
+                        department_id: answer.department_id
+                    },
+                    {
+                        name: roleTitle
+                    },
+                ],
+                function (error) {
+                    if (error) throw err;
+                    console.log("Department updated successfully!");
                     start();
                 }
             );
