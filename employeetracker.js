@@ -72,7 +72,6 @@ function viewEmployees() {
             .then(function (answer) {
                 console.log(answer.employees)
                 updateEmployee(answer.employees)
-                start();
             })
     })
 }
@@ -143,7 +142,7 @@ function viewDepartments() {
             .then(function (answer) {
                 console.log(answer.departments)
                 updateDepartment(answer.departments)
-                start();
+                
             })
     })
 }
@@ -312,7 +311,6 @@ function addRole() {
                 function (err) {
                     if (err) throw err;
                     console.log("Your role was created successfully!");
-                    start();
                 }
             );
         });
@@ -335,14 +333,14 @@ function updateRole(roleTitle) {
             {
                 name: "department_id",
                 type: "input",
-                message: "What is the department of the role?"
+                message: "What department is this in?"
             },
         ]).then(function (answer) {
             connection.query(
-                "UPDATE role SET ?,?,?,? WHERE ?",
+                "UPDATE role SET ?,?,? WHERE ?",
                 [
                     {
-                        name: answer.title
+                        title: answer.title
                     },
                     {
                         salary: answer.salary
@@ -351,13 +349,13 @@ function updateRole(roleTitle) {
                         department_id: answer.department_id
                     },
                     {
-                        name: roleTitle
+                        title: roleTitle
                     },
                 ],
                 function (error) {
-                    if (error) throw err;
-                    console.log("Department updated successfully!");
-                    start();
+                    if (error) throw error;
+                    console.log("Role updated successfully!");
+                    // start();
                 }
             );
         })
